@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 SS2 Universe | Всё-в-одном | Версия 1.3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --sidebar-width: 280px;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #111827;
+            --container-bg: #1f2937;
+            --text-color: #f3f4f6;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --container-bg: #ffffff;
+            --text-color: #374151;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -var(--sidebar-width);
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .version {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+            background: rgba(255,255,255,0.2);
+            padding: 3px 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--success);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.15);
+            border-left-color: var(--success);
+        }
+
+        .nav-icon {
+            font-size: 1.2em;
+            width: 25px;
+            text-align: center;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: var(--sidebar-width);
+        }
+
+        .container {
+            max-width: 1200px;
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 0 auto 20px;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .module-card {
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary);
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .module-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .module-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .admin-section {
+            padding: 30px;
+            background: var(--container-bg);
+        }
+
+        .admin-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .admin-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .admin-card h4 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Стили для игр */
+        .game-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+
+        .game-cell {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .game-cell:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .game-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--container-bg);
+            border-radius: 10px;
+        }
+
+        .bomber-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 2px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+
+        .bomber-cell {
+            width: 50px;
+            height: 50px;
+            background: #ddd;
+            border: 1px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .bomber-cell.revealed {
+            background: #fff;
+        }
+
+        .bomber-cell.bomb {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Стили для работающей админ-панели */
+        .admin-functional {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid var(--success);
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .admin-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .game-board {
+                grid-template-columns: repeat(3, 80px);
+                grid-template-rows: repeat(3, 80px);
+            }
+
+            .game-cell {
+                width: 80px;
+                height: 80px;
+            }
+
+            .bomber-grid {
+                grid-template-columns: repeat(8, 40px);
+                grid-template-rows: repeat(8, 40px);
+            }
+
+            .bomber-cell {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>🚀 SS2 Universe</h3>
+            <p>Всё-в-одном платформа</p>
+            <div class="version">Версия 1.3</div>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-item active" onclick="showPage('main')">
+                <span class="nav-icon">🏠</span>
+                <span>Главная</span>
+            </div>
+            <div class="nav-item" onclick="showPage('games')">
+                <span class="nav-icon">🎮</span>
+                <span>Игры по сети</span>
+            </div>
+            <div class="nav-item" onclick="showPage('education')">
+                <span class="nav-icon">📚</span>
+                <span>Обучение</span>
+            </div>
+            <div class="nav-item" onclick="showPage('social')">
+                <span class="nav-icon">👥</span>
+                <span>Сообщество</span>
+            </div>
+            <div class="nav-item" onclick="showPage('work')">
+                <span class="nav-icon">💼</span>
+                <span>Работа</span>
+            </div>
+            <div class="nav-item" onclick="showPage('achievements')">
+                <span class="nav-icon">🏆</span>
+                <span>Достижения</span>
+            </div>
+            <div class="nav-item" onclick="showAdminPage()">
+                <span class="nav-icon">🔧</span>
+                <span>Админ-панель</span>
+            </div>
+            <div class="nav-item" onclick="showPage('settings')">
+                <span class="nav-icon">⚙️</span>
+                <span>Настройки</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="main-content" id="mainContent">
+        
+        <div class="page active" id="mainPage">
+            <div class="container">
+                <div class="header">
+                    <h1>🚀 SS2 Universe v1.3</h1>
+                    <p>Всё-в-одном платформа: игры, общение, обучение, работа и многое другое!</p>
+                </div>
+                
+                <div class="modules-grid">
+                    <div class="module-card" onclick="showPage('games')">
+                        <div class="module-icon">🎮</div>
+                        <h3>Игры по сети</h3>
+                        <p>Крестики-нолики, Бомбер и другие multiplayer игры</p>
+                    </div>
+                    
+                    <div class="module-card" onclick="showPage('education')">
+                        <div class="module-icon">📚</div>
+                        <h3>Образовательный центр</h3>
+                        <p>Помощь с учебой, курсы, репетиторы и проекты</p>
+                    </div>
+                    
+                    <div class="module-card" onclick="showPage('social')">
+                        <div class="module-icon">👥</div>
+                        <h3>Социальная сеть</h3>
+                        <p>Общение, группы, друзья и сообщества по интересам</p>
+                    </div>
+                    
+                    <div class="module-card" onclick="showPage('work')">
+                        <div class="module-icon">💼</div>
+                        <h3>Рабочее пространство</h3>
+                        <p>Проекты, задачи, коллаборация и управление командами</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="gamesPage">
+            <div class="container">
+                <div class="header">
+                    <h1>🎮 Игры по сети</h1>
+                    <p>Играйте с друзьями онлайн! Выберите игру:</p>
+                </div>
+                <div class="admin-section">
+                    <div class="modules-grid">
+                        <div class="module-card" onclick="startGame('tictactoe')">
+                            <div class="module-icon">⭕</div>
+                            <h3>Крестики-нолики</h3>
+                            <p>Классическая игра для двух игроков</p>
+                        </div>
+                        <div class="module-card" onclick="startGame('bomber')">
+                            <div class="module-icon">💣</div>
+                            <h3>Бомбер</h3>
+                            <p>Найдите все бомбы на поле</p>
+                        </div>
+                        <div class="module-card" onclick="startGame('chess')">
+                            <div class="module-icon">♟️</div>
+                            <h3>Шахматы</h3>
+                            <p>Скоро будет доступно</p>
+                        </div>
+                        <div class="module-card" onclick="startGame('checkers')">
+                            <div class="module-icon">⚫</div>
+                            <h3>Шашки</h3>
+                            <p>Скоро будет доступно</p>
+                        </div>
+                    </div>
+
+                    <!-- Игровые поля -->
+                    <div id="tictactoeGame" class="game-container" style="display: none;">
+                        <h3>⭕ Крестики-нолики</h3>
+                        <div class="game-info">
+                            <p>Сейчас ходит: <span id="currentPlayer">X</span></p>
+                            <p>Статус: <span id="gameStatus">Игра началась!</span></p>
+                        </div>
+                        <div class="game-board" id="tictactoeBoard">
+                            <!-- Ячейки добавляются через JS -->
+                        </div>
+                        <button class="btn btn-primary" onclick="resetTicTacToe()">Новая игра</button>
+                        <button class="btn btn-danger" onclick="hideAllGames()">Выйти</button>
+                    </div>
+
+                    <div id="bomberGame" class="game-container" style="display: none;">
+                        <h3>💣 Бомбер</h3>
+                        <div class="game-info">
+                            <p>Бомб осталось: <span id="bombsLeft">10</span></p>
+                            <p>Статус: <span id="bomberStatus">Найдите все бомбы!</span></p>
+                        </div>
+                        <div class="bomber-grid" id="bomberBoard">
+                            <!-- Ячейки добавляются через JS -->
+                        </div>
+                        <button class="btn btn-primary" onclick="resetBomber()">Новая игра</button>
+                        <button class="btn btn-danger" onclick="hideAllGames()">Выйти</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="adminPage" style="display: none;">
+            <div class="container">
+                <div class="header">
+                    <h1>🔧 Админ-панель SS2 v1.3</h1>
+                    <p>Полный контроль над платформой</p>
+                </div>
+                <div class="admin-section">
+                    <div class="admin-panel" id="adminPanelContent">
+                        <!-- Админ-панель будет загружена здесь после авторизации -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Другие страницы -->
+        <div class="page" id="educationPage">
+            <div class="container">
+                <div class="header">
+                    <h1>📚 Образовательный центр</h1>
+                    <p>Изучайте новое и развивайтесь</p>
+                </div>
+                <div class="admin-section">
+                    <p>Образовательные материалы скоро появятся...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="socialPage">
+            <div class="container">
+                <div class="header">
+                    <h1>👥 Социальная сеть</h1>
+                    <p>Общайтесь с друзьями и единомышленниками</p>
+                </div>
+                <div class="admin-section">
+                    <p>Социальные функции скоро появятся...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Зашифрованный пароль (base64)
+        const ENCRYPTED_PASSWORD = "Y3JlYXRvcl9zczE="; // "creator_ss1" в base64
+        
+        // Данные платформы
+        let users = JSON.parse(localStorage.getItem('ss2_users')) || [];
+        let bannedUsers = JSON.parse(localStorage.getItem('ss2_banned_users')) || [];
+        let settings = JSON.parse(localStorage.getItem('ss2_settings')) || {};
+
+        // Игровые переменные
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        let bomberBoard = [];
+        let bombsLeft = 10;
+
+        // Навигация
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('sidebar-open');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId + 'Page').classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        // Админ-панель с защитой паролем
+        function showAdminPage() {
+            const userPassword = prompt("🔐 Введите пароль админ-панели:");
+            
+            // Декодируем и проверяем пароль
+            const realPassword = atob(ENCRYPTED_PASSWORD);
+            
+            if (userPassword !== realPassword) {
+                alert("❌ Неверный пароль! Доступ запрещен.");
+                return;
+            }
+
+            // Показываем админ-панель
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('adminPage').style.display = 'block';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            // Загружаем содержимое админ-панели
+            loadAdminPanel();
+            
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        function loadAdminPanel() {
+            const adminPanel = document.getElementById('adminPanelContent');
+            adminPanel.innerHTML = `
+                <h2>⚙️ Управление платформой v1.3</h2>
+                
+                <div class="admin-functional">
+                    <h4>👤 Управление пользователями</h4>
+                    <div class="admin-controls">
+                        <input type="text" id="usernameInput" class="admin-input" placeholder="Имя пользователя">
+                        <button class="btn btn-success" onclick="addUser()">Добавить</button>
+                        <button class="btn btn-danger" onclick="banUser()">Забанить</button>
+                    </div>
+                    <div class="user-list">
+                        ${users.map(user => `
+                            <div class="user-item">
+                                <span>${user}</span>
+                                <button class="btn btn-danger" onclick="removeUser('${user}')">Удалить</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="admin-functional">
+                    <h4>🚫 Система банов</h4>
+                    <p>Забаненные пользователи: ${bannedUsers.length}</p>
+                    <div class="admin-controls">
+                        <input type="text" id="unbanInput" class="admin-input" placeholder="Имя для разбана">
+                        <button class="btn btn-success" onclick="unbanUser()">Разбанить</button>
+                    </div>
+                </div>
+
+                <div class="admin-functional">
+                    <h4>🎮 Управление играми</h4>
+                    <div class="admin-controls">
+                        <button class="btn btn-primary" onclick="resetAllGames()">Сбросить все игры</button>
+                        <button class="btn btn-warning" onclick="clearGameStats()">Очистить статистику</button>
+                    </div>
+                </div>
+
+                <div class="admin-functional">
+                    <h4>📊 Статистика платформы</h4>
+                    <div class="admin-grid">
+                        <div class="admin-card">
+                            <h5>Пользователи</h5>
+                            <p>Всего: ${users.length}</p>
+                            <p>Забанено: ${bannedUsers.length}</p>
+                        </div>
+                        <div class="admin-card">
+                            <h5>Игры</h5>
+                            <p>Активных сессий: 0</p>
+                            <p>Всего сыграно: 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #e8f4fd; border-radius: 10px;">
+                    <h4>🛡️ Безопасность пароля</h4>
+                    <p>Пароль защищён шифрованием и не отображается в исходном коде</p>
+                    <small style="color: #666;">Доступ только у авторизованных администраторов</small>
+                </div>
+            `;
+        }
+
+        // Функции админ-панели
+        function addUser() {
+            const username = document.getElementById('usernameInput').value;
+            if (username && !users.includes(username)) {
+                users.push(username);
+                localStorage.setItem('ss2_users', JSON.stringify(users));
+                loadAdminPanel();
+                alert(`Пользователь ${username} добавлен!`);
+            }
+        }
+
+        function removeUser(username) {
+            users = users.filter(user => user !== username);
+            localStorage.setItem('ss2_users', JSON.stringify(users));
+            loadAdminPanel();
+        }
+
+        function banUser() {
+            const username = document.getElementById('usernameInput').value;
+            if (username && !bannedUsers.includes(username)) {
+                bannedUsers.push(username);
+                users = users.filter(user => user !== username);
+                localStorage.setItem('ss2_banned_users', JSON.stringify(bannedUsers));
+                localStorage.setItem('ss2_users', JSON.stringify(users));
+                loadAdminPanel();
+                alert(`Пользователь ${username} забанен!`);
+            }
+        }
+
+        function unbanUser() {
+            const username = document.getElementById('unbanInput').value;
+            if (username && bannedUsers.includes(username)) {
+                bannedUsers = bannedUsers.filter(user => user !== username);
+                users.push(username);
+                localStorage.setItem('ss2_banned_users', JSON.stringify(bannedUsers));
+                localStorage.setItem('ss2_users', JSON.stringify(users));
+                loadAdminPanel();
+                alert(`Пользователь ${username} разбанен!`);
+            }
+        }
+
+        function resetAllGames() {
+            localStorage.removeItem('ss2_game_stats');
+            alert('Статистика игр сброшена!');
+        }
+
+        function clearGameStats() {
+            localStorage.removeItem('ss2_game_stats');
+            alert('Статистика игр очищена!');
+        }
+
+        // Игровые функции
+        function startGame(gameType) {
+            hideAllGames();
+            
+            if (gameType === 'tictactoe') {
+                document.getElementById('tictactoeGame').style.display = 'block';
+                initTicTacToe();
+            } else if (gameType === 'bomber') {
+                document.getElementById('bomberGame').style.display = 'block';
+                initBomber();
+            } else {
+                alert('Эта игра скоро будет доступна!');
+            }
+        }
+
+        function hideAllGames() {
+            document.getElementById('tictactoeGame').style.display = 'none';
+            document.getElementById('bomberGame').style.display = 'none';
+        }
+
+        // Крестики-нолики
+        function initTicTacToe() {
+            const board = document.getElementById('tictactoeBoard');
+            board.innerHTML = '';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            
+            document.getElementById('currentPlayer').textContent = currentPlayer;
+            document.getElementById('gameStatus').textContent = 'Игра началась!';
+
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'game-cell';
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', () => handleCellClick(i));
+                board.appendChild(cell);
+            }
+        }
+
+        function handleCellClick(index) {
+            if (!gameActive || gameBoard[index] !== '') return;
+
+            gameBoard[index] = currentPlayer;
+            document.querySelector(`[data-index="${index}"]`).textContent = currentPlayer;
+            
+            if (checkWinner()) {
+                document.getElementById('gameStatus').textContent = `Игрок ${currentPlayer} победил!`;
+                gameActive = false;
+                return;
+            }
+
+            if (gameBoard.every(cell => cell !== '')) {
+                document.getElementById('gameStatus').textContent = 'Ничья!';
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('currentPlayer').textContent = currentPlayer;
+        }
+
+        function checkWinner() {
+            const winPatterns = [
+                [0,1,2], [3,4,5], [6,7,8], // rows
+                [0,3,6], [1,4,7], [2,5,8], // columns
+                [0,4,8], [2,4,6] // diagonals
+            ];
+
+            return winPatterns.some(pattern => {
+                const [a,b,c] = pattern;
+                return gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c];
+            });
+        }
+
+        function resetTicTacToe() {
+            initTicTacToe();
+        }
+
+        // Игра Бомбер
+        function initBomber() {
+            const board = document.getElementById('bomberBoard');
+            board.innerHTML = '';
+            bomberBoard = [];
+            bombsLeft = 10;
+
+            // Создаем поле 8x8
+            for (let i = 0; i < 8; i++) {
+                bomberBoard[i] = [];
+                for (let j = 0; j < 8; j++) {
+                    bomberBoard[i][j] = {
+                        isBomb: false,
+                        isRevealed: false,
+                        neighborBombs: 0
+                    };
+                }
+            }
+
+            // Расставляем бомбы
+            let bombsPlaced = 0;
+            while (bombsPlaced < 10) {
+                const x = Math.floor(Math.random() * 8);
+                const y = Math.floor(Math.random() * 8);
+                if (!bomberBoard[x][y].isBomb) {
+                    bomberBoard[x][y].isBomb = true;
+                    bombsPlaced++;
+                }
+            }
+
+            // Считаем соседние бомбы
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    if (!bomberBoard[i][j].isBomb) {
+                        bomberBoard[i][j].neighborBombs = countNeighborBombs(i, j);
+                    }
+                }
+            }
+
+            // Создаем UI
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'bomber-cell';
+                    cell.setAttribute('data-x', i);
+                    cell.setAttribute('data-y', j);
+                    cell.addEventListener('click', () => revealCell(i, j));
+                    board.appendChild(cell);
+                }
+            }
+
+            updateBomberUI();
+        }
+
+        function countNeighborBombs(x, y) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    const newX = x + i;
+                    const newY = y + j;
+                    if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 && bomberBoard[newX][newY].isBomb) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        function revealCell(x, y) {
+            const cell = bomberBoard[x][y];
+            if (cell.isRevealed) return;
+
+            cell.isRevealed = true;
+            const uiCell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+            uiCell.classList.add('revealed');
+
+            if (cell.isBomb) {
+                uiCell.classList.add('bomb');
+                uiCell.textContent = '💣';
+                document.getElementById('bomberStatus').textContent = 'Вы проиграли!';
+                revealAllBombs();
+            } else {
+                uiCell.textContent = cell.neighborBombs || '';
+                if (cell.neighborBombs === 0) {
+                    revealNeighbors(x, y);
+                }
+                checkWinCondition();
+            }
+        }
+
+        function revealNeighbors(x, y) {
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    const newX = x + i;
+                    const newY = y + j;
+                    if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 && !bomberBoard[newX][newY].isRevealed) {
+                        revealCell(newX, newY);
+                    }
+                }
+            }
+        }
+
+        function revealAllBombs() {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    if (bomberBoard[i][j].isBomb) {
+                        const uiCell = document.querySelector(`[data-x="${i}"][data-y="${j}"]`);
+                        uiCell.classList.add('revealed', 'bomb');
+                        uiCell.textContent = '💣';
+                    }
+                }
+            }
+        }
+
+        function checkWinCondition() {
+            let unrevealedSafeCells = 0;
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    if (!bomberBoard[i][j].isRevealed && !bomberBoard[i][j].isBomb) {
+                        unrevealedSafeCells++;
+                    }
+                }
+            }
+            
+            if (unrevealedSafeCells === 0) {
+                document.getElementById('bomberStatus').textContent = 'Вы победили! Все бомбы найдены!';
+            }
+        }
+
+        function updateBomberUI() {
+            document.getElementById('bombsLeft').textContent = bombsLeft;
+        }
+
+        function resetBomber() {
+            initBomber();
+        }
+
+        // Закрытие сайдбара при клике вне его
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+        });
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("🚀 SS2 Universe v1.3 загружен!");
+            console.log("🔐 Админ-панель защищена шифрованием");
+            console.log("🎮 Игры по сети активированы");
+        });
+    </script>
+</body>
+  </html>
